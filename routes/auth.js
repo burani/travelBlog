@@ -3,7 +3,8 @@ const User = require('../model/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const {registerValidation, loginValidation}= require('../validation');
-
+const verify = require('./verifyToken');
+// const User = require('../model/User');
 
 // validation
 
@@ -68,6 +69,34 @@ router.post('/login', async (req, res) => {
     // res.send('Logged in!');
 
 })
+
+
+
+// Protected routes.
+
+
+
+
+router.get('/getUser', verify, (req, res) =>{
+
+    // с помощью req.user можно достать id пользователя, т.к содержится, далее можно найти пользователя в базе данных с помощью User.findOne(id)
+    const userId = req.user; //в эту функцию заносится res из verifyToken, который принимает токен пользователя и вынимает из него id ну и верифицирует пользователя.
+    console.log("User id : " + userId);
+    // Здесь наверное надо еще из jwt токена достать id.
+
+    // console.log(User.findOne({_id: req.user}));
+    // console.log(req.headers);
+    console.log("LOGGING USER: " + User.findOne({_id: req.user}));
+    // res.send(User.findOne({_id: req.user.tree})); 
+
+    // Посылаем обратно найденного пользователя.
+    User.findOne({_id: req.user}, function(err, obj) {
+        console.log(obj);
+        res.send(obj);
+    });
+
+});
+
 
 
 
