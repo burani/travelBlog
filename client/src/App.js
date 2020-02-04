@@ -10,53 +10,34 @@ import Register from './components/Register';
 import AddPost from './components/AddPost';
 import MyPosts from './components/MyPosts';
 import Nav from './components/Nav';
+import {Context} from './Context';
+import { getJwt } from './helpers/jwt';
+
 function App() {
 
 
-  // user - главный state, в нем хранится вся информация о текущем пользователе. Он изменяется по мере логина/выхода из системы.
-  // !!!!!Пользователя скорее всего надо вообще поместить в контекст, который будет передаваться всем компонентам приложения. В зависимости от loggedin нужно будет перенаправлять пользователя 
-  // const [user, setUser] = useState({
-  //   username: "",
-  //   email: "",
-  //   loggedin: false,//это нужно добавить в хук, чтобы проверялся на залогиненность пользователя
-  //   id: "",
-  //   token: ""//!!!!не знаю пока, нужно ли хранить токен здесь или лучше в отдельной переменной.
-  // });
-  // const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
+  const [loggedIn, setLoggedIn] = useState(checkLoggedIn());
 
 
-  
+  function checkLoggedIn(){
+    const jwt = getJwt();
+    if (jwt) return true;
+    else return false;
+  }
 
 
-  // Пример получения данных из api
-  // Возможно в этом хуке нужно будет сначала проверять содержится ли токен в локальной памяти, поиск пользователя по токену
-  // useEffect(() =>{
-  //   axios.get('/api').then(response => {
-  //     setUser(response.data);
+  const setLoggedInTrue = function(){
+    setLoggedIn(true);
+  }
+  const setLoggedInFalse = function(){
+    setLoggedIn(false);
+  }
 
-  //   })
-  // }, [])
-
-
-
-  // Сначала нужно проверить, зашел ли пользователь в приложение. (Можно упростить и сделать без запоминания пользователей)
-  // Если он не зашел, то сназу перенаправить его на экран логина, вне зависимости от того, на какой route он заходил
-
-  // Если он зашел, то сразу показать ему homepage.
-
-
-  // А вообще для самого начала нужно хотя бы протестировать работу с api в реакте.
-  // Короче, наверное лучше пока что без запоминания сделать, потом если что можно доделать это
-
-
-
-
-  // надо редиректить пользователя пока он не зайдет.
   return (
 
     <Router>
-      <Nav/>
+      <Context.Provider value={{setLoggedInTrue, setLoggedInFalse}}>
+      <Nav loggedIn={loggedIn}/>
       <Switch>
 
         {/* <Nav></Nav> */}
@@ -74,7 +55,9 @@ function App() {
 
         </AuthenticatedComponent>
 
-      </Switch>
+        </Switch>
+      </Context.Provider>
+      
     </Router>
   );
 }

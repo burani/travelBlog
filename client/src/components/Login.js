@@ -1,6 +1,7 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import { startSession } from 'mongoose';
 import axios from 'axios';
+import {Context} from '../Context';
 
 import { getJwt } from '../helpers/jwt';
 
@@ -11,6 +12,7 @@ const Login = (props) => {
         password: ""
     })
 
+    const {setLoggedInTrue, setLoggedInFalse} = useContext(Context);
 
 
     useEffect(() => {
@@ -19,6 +21,7 @@ const Login = (props) => {
         console.log(jwt);
         if (jwt){
             localStorage.removeItem('jwt');
+            setLoggedInFalse();
             props.history.push('/Register');
         }
 
@@ -43,6 +46,7 @@ const Login = (props) => {
             console.log("JWT TOKEN: " + res.data);
             localStorage.setItem('jwt', res.data);
             // console.log(state.email + " " + state.password);
+            setLoggedInTrue();
             props.history.push("/");  
         }).catch(function(error){
             // console.log(state.email + " " + state.password);
